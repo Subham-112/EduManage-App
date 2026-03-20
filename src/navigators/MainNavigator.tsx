@@ -4,7 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '../components/HomeScreen';
 import { LoginScreen } from '../components/LoginScreen';
 import { SplashScreen } from '../components/SplashScreen';
-import CreateAccount from '../components/CreateAccount';
+import { CreateAccount } from '../components/CreateAccount';
+import { CreateTenant } from '../components/CreateTenant';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,8 @@ export const MainNavigator = () => {
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="CreateAccount" component={CreateAccount} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
+
+      <Stack.Screen name="CreateTenant" component={CreateTenant} />
     </Stack.Navigator>
   );
 };
