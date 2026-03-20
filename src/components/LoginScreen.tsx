@@ -46,7 +46,8 @@ export const LoginScreen = () => {
     setLoading(true);
     const isValid = validateFields();
     if (!isValid) {
-      ToastAndroid.show('Please fill all fields correctly', ToastAndroid.SHORT);
+      setLoading(false);
+      return;
     }
 
     try {
@@ -71,13 +72,10 @@ export const LoginScreen = () => {
       if (data.success) {
         ToastAndroid.show('Login successful', ToastAndroid.SHORT);
         await AsyncStorage.setItem('ownerToken', data.data.accessToken);
-        // setFormData({ email: '', password: '' });
-        console.log('Token stored successfully');
-        console.log('getting the token back to verify storage:');
-        await AsyncStorage.getItem('ownerToken').then(token => console.log('Got the token:', token));
+        setFormData({ email: '', password: '' });
+        navigation.navigate('CreateTenant');
       } else {
-        ToastAndroid.show('Login failed', ToastAndroid.SHORT);
-        console.error('Login error:', data.message || 'Unknown error');
+        ToastAndroid.show(data.message, ToastAndroid.SHORT);
       }
     } catch (error) {
       ToastAndroid.show('An error occurred during login', ToastAndroid.SHORT);
