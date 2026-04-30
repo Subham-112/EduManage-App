@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Alert,
   Animated,
@@ -14,17 +15,22 @@ import {
   TouchableOpacity,
   View,
   Permission,
+  ToastAndroid,
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Fa6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { BASE_URL } from '../tools/apiUtils';
+import { useNavigation } from '@react-navigation/native';
 
-const STEPS = 3;
+const STEPS = 2;
 
 export const CreateTenant = () => {
   const progress = useRef(new Animated.Value(0)).current; // 0..1
+  const navigation = useNavigation<any>();
 
   const [step, setStep] = useState(1);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     // Basic Info
     name: '',
@@ -174,6 +180,88 @@ export const CreateTenant = () => {
     setStep(s => Math.max(1, s - 1));
   }
 
+  const validateFields = (): boolean => {
+    if (step === 1) {
+      if (!formData.name.trim()) {
+        Alert.alert('Validation Error', 'Please enter a coaching name.');
+        return false;
+      }
+      if (!formData.phone.trim()) {
+        Alert.alert('Validation Error', 'Please enter a phone number.');
+        return false;
+      }
+      if (!formData.email.trim()) {
+        Alert.alert('Validation Error', 'Please enter an email address.');
+        return false;
+      }
+    }
+
+    // Branding & Billing
+    if (step === 2) {
+      if (!formData.logo) {
+        Alert.alert('Validation Error', 'Please upload a logo for your institution.');
+        return false;
+      }
+      if (!formData.images || formData.images.length === 0) {
+        Alert.alert('Validation Error', 'Please upload at least one gallery image.');
+        return false;
+      }
+    }
+
+    // Plan Selection
+    // if (step === 3) {
+    //   if (!selectedPlan) {
+    //     Alert.alert('Validation Error', 'Please select a subscription plan.');
+    //     return false;
+    //   }
+    // }
+    return true;
+  };
+
+
+  const handleCreate = async () => {
+    const isValid = validateFields();
+    if (!isValid) return;
+
+    const url = `${BASE_URL}api/tenants/create`;
+    const token = await AsyncStorage.getItem('ownerToken');
+    const payload = {
+      name: formData.name,
+      description: formData.description,
+      phone: formData.phone,
+      email: formData.email,
+      logo: formData.logo,
+      images: formData.images,
+      billingInfo: {
+        email: formData.billingEmail || formData.email,
+        companyName: formData.companyName || formData.name,
+        gstNumber: formData.gstNumber,
+      },
+      // plan: selectedPlan,
+    };
+    console.log('Creating tenant with payload:', payload);
+
+    try {
+      const response: any = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        ToastAndroid.show('Tenant created successfully!', ToastAndroid.SHORT);
+        navigation.navigate('Dashboard');
+      }
+    } catch (err) {
+      console.error('Failed to create tenant', err);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: '#fbfdff' }}
@@ -256,6 +344,10 @@ export const CreateTenant = () => {
               }}
               placeholder="e.g. Elite Scholars Academy"
               placeholderTextColor={'#999'}
+              value={formData.name}
+              onChangeText={(text: string) =>
+                setFormData(prev => ({ ...prev, name: text }))
+              }
             />
 
             <Text
@@ -283,6 +375,10 @@ export const CreateTenant = () => {
               placeholder="Briefly describe your coaching style or focus..."
               placeholderTextColor={'#999'}
               multiline
+              value={formData.description}
+              onChangeText={(text: string) =>
+                setFormData(prev => ({ ...prev, description: text }))
+              }
             />
 
             <Text
@@ -322,6 +418,10 @@ export const CreateTenant = () => {
                 placeholder="000 000 0000"
                 placeholderTextColor={'#999'}
                 keyboardType="phone-pad"
+                value={formData.phone}
+                onChangeText={(text: string) =>
+                  setFormData(prev => ({ ...prev, phone: text }))
+                }
               />
             </View>
 
@@ -347,6 +447,12 @@ export const CreateTenant = () => {
               }}
               placeholder="admin@elitescholars.com"
               placeholderTextColor={'#999'}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={formData.email}
+              onChangeText={(text: string) =>
+                setFormData(prev => ({ ...prev, email: text }))
+              }
             />
             <View
               style={{
@@ -524,6 +630,10 @@ export const CreateTenant = () => {
               }}
               placeholder="e.g. Oakridge Academy"
               placeholderTextColor={'#999'}
+              value={formData.companyName || formData.name}
+              onChangeText={(text: string) =>
+                setFormData(prev => ({ ...prev, companyName: text }))
+              }
             />
 
             <Text
@@ -548,6 +658,10 @@ export const CreateTenant = () => {
               }}
               placeholder="finance@institution.com"
               placeholderTextColor={'#999'}
+              value={formData.billingEmail || formData.email}
+              onChangeText={(text: string) =>
+                setFormData(prev => ({ ...prev, billingEmail: text }))
+              }
             />
 
             <Text
@@ -572,21 +686,26 @@ export const CreateTenant = () => {
               }}
               placeholder="22AAAAA0000A1Z5"
               placeholderTextColor={'#999'}
+              value={formData.gstNumber}
+              onChangeText={(text: string) =>
+                setFormData(prev => ({ ...prev, gstNumber: text }))
+              }
             />
           </>
         )}
 
-        {step === 3 && (
+        {/* {step === 3 && (
           <>
-            <View
+            <TouchableOpacity
               style={{
-                borderWidth: 1,
-                borderColor: '#eef3ff',
+                borderWidth: 2,
+                borderColor: selectedPlan === '1' ? '#0b48d5' : '#eef3ff',
                 padding: 16,
                 borderRadius: 12,
                 marginTop: 8,
                 backgroundColor: '#fff',
               }}
+              onPress={() => setSelectedPlan("1")}
             >
               <Text style={{ color: '#1e3a8a', fontWeight: '700' }}>
                 TIER 01
@@ -605,17 +724,18 @@ export const CreateTenant = () => {
                   /mo
                 </Text>
               </Text>
-            </View>
+            </TouchableOpacity>
 
-            <View
+            <TouchableOpacity
               style={{
-                borderWidth: 1,
-                borderColor: '#eef3ff',
+                borderWidth: 2,
+                borderColor: selectedPlan === '2' ? '#0b48d5' : '#eef3ff',
                 padding: 16,
                 borderRadius: 12,
                 marginTop: 8,
                 backgroundColor: '#fff',
               }}
+              onPress={() => setSelectedPlan('2')}
             >
               <Text style={{ color: '#1e3a8a', fontWeight: '700' }}>
                 TIER 02
@@ -634,17 +754,18 @@ export const CreateTenant = () => {
                   /mo
                 </Text>
               </Text>
-            </View>
+            </TouchableOpacity>
 
-            <View
+            <TouchableOpacity
               style={{
-                borderColor: '#0b48d5',
                 borderWidth: 2,
+                borderColor: selectedPlan === '3' ? '#0b48d5' : '#eef3ff',
                 backgroundColor: '#fff',
                 padding: 16,
                 borderRadius: 12,
                 marginTop: 12,
               }}
+              onPress={() => setSelectedPlan('3')}
             >
               <View
                 style={{
@@ -676,17 +797,18 @@ export const CreateTenant = () => {
                   /mo
                 </Text>
               </Text>
-            </View>
+            </TouchableOpacity>
 
-            <View
+            <TouchableOpacity
               style={{
-                borderWidth: 1,
-                borderColor: '#eef3ff',
+                borderWidth: 2,
+                borderColor: selectedPlan === '4' ? '#0b48d5' : '#eef3ff',
                 padding: 16,
                 borderRadius: 12,
                 marginTop: 8,
                 backgroundColor: '#fff',
               }}
+              onPress={() => setSelectedPlan('4')}
             >
               <Text style={{ color: '#1e3a8a', fontWeight: '700' }}>
                 TIER 04
@@ -702,9 +824,9 @@ export const CreateTenant = () => {
               >
                 Contact Sales
               </Text>
-            </View>
+            </TouchableOpacity>
           </>
-        )}
+        )} */}
       </ScrollView>
 
       <View
@@ -829,7 +951,7 @@ export const CreateTenant = () => {
                 shadowOpacity: 0.25,
                 shadowRadius: 12,
               }}
-              onPress={() => {}}
+              onPress={handleCreate}
             >
               <Text
                 style={{

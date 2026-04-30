@@ -1,164 +1,148 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { StatusBar, Text, TouchableOpacity, View, Animated, Easing } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Fa6 from "react-native-vector-icons/FontAwesome6";
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  Image, 
+  TouchableOpacity,
+  StatusBar
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ImagePath } from '../utils/ImagePath';
 
-export const SplashScreen = () => {
-  const font = 'Poppins';
-  const navigation: any = useNavigation();
-  const progress = useRef(new Animated.Value(0)).current;
-  const [percent, setPercent] = useState(0);
+const slides = [
+  {
+    id: 1,
+    image: ImagePath.Splash.main_one,
+    title: 'Stay ',
+    titleHighlight: 'Organized',
+    description: 'Manage assignments, attendance,\nand schedules in one place',
+  },
+  {
+    id: 2,
+    image: ImagePath.Splash.main_two,
+    title: 'Track Your ',
+    titleHighlight: 'Progress',
+    description: 'Monitor performance, attendance,\nand results effortlessly',
+  },
+  {
+    id: 3,
+    image: ImagePath.Splash.main_three,
+    title: 'Simplify ',
+    titleHighlight: 'Learning',
+    description: 'Connect students and teachers in\none seamless platform',
+  },
+];
+
+export const SplashScreen = ({ navigation }: any) => {
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    const id = progress.addListener(({ value }) => {
-      setPercent(Math.round(value));
-    });
+    StatusBar.setTranslucent(true);
+    StatusBar.setBackgroundColor('transparent');
+    StatusBar.setBarStyle('dark-content');
+  }, []);
 
-    // Use an ease-out easing so animation starts fast and slows toward the end
-    Animated.timing(progress, {
-      toValue: 100,
-      duration: 3000,
-      easing: Easing.out(Easing.quad),
-      useNativeDriver: false,
-    }).start(() => {
-      progress.removeAllListeners();
-      navigation.navigate('LoginScreen');
-    });
+  const goToNextSlide = () => {
+    if (currentSlideIndex < slides.length - 1) {
+      setCurrentSlideIndex(currentSlideIndex + 1);
+    } else {
+      // Navigation logic when finished
+      // navigation.replace('Home');
+    }
+  };
 
-    return () => {
-      progress.removeListener(id);
-    };
-  }, [navigation, progress]);
+  const goToPrevSlide = () => {
+    if (currentSlideIndex > 0) {
+      setCurrentSlideIndex(currentSlideIndex - 1);
+    }
+  };
 
-  const widthInterpolated = progress.interpolate({
-    inputRange: [0, 100],
-    outputRange: ['0%', '100%'],
-  });
+  const currentSlide = slides[currentSlideIndex];
 
   return (
-    <SafeAreaView
-      edges={['top', 'left', 'right']}
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#2563eb',
-      }}
-    >
-      <StatusBar
-        translucent
-        barStyle={'light-content'}
-        backgroundColor={'#2563eb'}
+    <View className="flex-1 bg-[#FFFDF6]" style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
+      <Image 
+        source={ImagePath.Splash.top_design} 
+        className="absolute -top-8 -left-5 w-[80vw] h-[40vw]"
+        resizeMode="contain"
       />
-      <View
-        style={{
-          width: '100%',
-          height: 'auto',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: "-20%",
-        }}
-      >
-        {/* Logo */}
-        <View
-          style={{
-            backgroundColor: '#3b82f6',
-            borderRadius: 24,
-            padding: 24,
-            marginBottom: 32,
-            shadowColor: '#000',
-            shadowOpacity: 0.2,
-            shadowRadius: 8,
-          }}
-        >
-          {/* Replace below with your logo image if available */}
-          <View
-            style={{
-              backgroundColor: '#fff',
-              borderRadius: 12,
-              padding: 16,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Fa6 name="graduation-cap" size={30} color="#2563eb" />
-          </View>
+      <Image 
+        source={ImagePath.Splash.bottom_design} 
+        className="absolute -left-5 w-[120vw] h-[60vw]"
+        style={{bottom: -63}}
+        resizeMode="contain"
+      />
+
+      <View className="flex-1 items-center justify-center px-5 mt-[15vh] z-10">
+        <View className="flex-[0.6] justify-center items-center w-full">
+          <Image
+            source={currentSlide.image}
+            className="w-[90%] h-[90%]"
+            resizeMode="contain"
+          />
         </View>
 
-        {/* Title */}
-        <Text
-          style={{
-            fontFamily: font,
-            fontSize: 32,
-            fontWeight: 'bold',
-            color: '#fff',
-            marginBottom: 8,
-          }}
-        >
-          EduManage
-        </Text>
-
-        {/* Subtitle */}
-        <Text
-          style={{
-            fontFamily: font,
-            fontSize: 16,
-            color: '#e0e7ef',
-            marginBottom: 32,
-            textAlign: 'center',
-          }}
-        >
-          Smart Coaching Management for Students
-        </Text>
-
-        {/* Progress bar section */}
-        <View style={{ width: '100%', alignItems: 'center', marginBottom: 32 }}>
-          <Text
-            style={{
-              fontFamily: font,
-              fontSize: 16,
-              color: '#fff',
-              marginBottom: 8,
-            }}
+        <View className="flex-[0.4] items-center">
+          <Text 
+            className="text-[28px] font-bold text-gray-800 text-center mb-4" 
+            style={{ fontFamily: 'Poppins' }}
           >
-            Initializing student portal...
+            {currentSlide.title}
+            <Text className="text-[#FFB800]">{currentSlide.titleHighlight}</Text>
           </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 8,
-            }}
+          <Text 
+            className="text-[15px] text-gray-600 text-center leading-6" 
+            style={{ fontFamily: 'Poppins' }}
           >
-            <View
-              style={{
-                width: '75%',
-                height: 8,
-                backgroundColor: '#1e40af',
-                borderRadius: 8,
-                overflow: 'hidden',
-                marginRight: 8,
-              }}
-            >
-              <Animated.View
-                style={{
-                  width: widthInterpolated,
-                  height: '100%',
-                  backgroundColor: '#60a5fa',
-                }}
-              />
-            </View>
-            <Text style={{ fontFamily: font, fontSize: 16, color: '#fff' }}>
-              {percent}%
-            </Text>
-          </View>
+            {currentSlide.description}
+          </Text>
+        </View>
+      </View>
+
+      <View className="flex-row justify-between items-center px-6 pb-10 h-[100px] z-20">
+        <View className="flex-1 items-start">
+          {currentSlideIndex > 0 && (
+            <TouchableOpacity onPress={goToPrevSlide} className="py-3 px-2">
+              <Text 
+                className="font-semibold text-[16px] text-gray-800" 
+                style={{ fontFamily: 'Poppins' }}
+              >
+                ← Prev
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* Spacer */}
-        <View style={{ flex: 1 }} />
+        <View className="flex-row items-center justify-center flex-1 gap-2">
+          {slides.map((_, index) => (
+            <View 
+              key={index} 
+              className={`h-2 w-2 rounded-full mx-1 ${
+                currentSlideIndex === index ? 'bg-[#FFB800]' : 'bg-gray-300'
+              }`} 
+            />
+          ))}
+        </View>
+
+        <View className="flex-1 items-end">
+          <TouchableOpacity 
+            onPress={goToNextSlide} 
+            className="bg-[#FFB800] py-3 px-5 rounded-full shadow-sm min-w-[100px] items-center"
+            style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 }}
+          >
+            <Text 
+              className="font-semibold text-[16px] text-gray-800" 
+              style={{ fontFamily: 'Poppins' }}
+            >
+              {currentSlideIndex === slides.length - 1 ? 'Finish ✓' : 'Next →'}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
+
+export default SplashScreen;
