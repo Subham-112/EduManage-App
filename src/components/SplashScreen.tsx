@@ -7,7 +7,9 @@ import {
   StatusBar
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Feather from 'react-native-vector-icons/Feather';
 import { ImagePath } from '../utils/ImagePath';
+import { COLORS, FONT, SIZES } from '../utils/theme';
 
 const slides = [
   {
@@ -47,8 +49,7 @@ export const SplashScreen = ({ navigation }: any) => {
     if (currentSlideIndex < slides.length - 1) {
       setCurrentSlideIndex(currentSlideIndex + 1);
     } else {
-      // Navigation logic when finished
-      // navigation.replace('Home');
+      navigation.replace('LoginScreen');
     }
   };
 
@@ -75,41 +76,42 @@ export const SplashScreen = ({ navigation }: any) => {
         resizeMode="contain"
       />
 
-      <View className="flex-1 items-center justify-center px-5 mt-[15vh] z-10">
-        <View className="flex-[0.6] justify-center items-center w-full">
+      <View className="h-auto items-center justify-center mt-10 z-10">
+        <View className="justify-center items-center w-full h-[55%] mb-6">
           <Image
             source={currentSlide.image}
-            className="w-[90%] h-[90%]"
+            className="w-full h-[100%]"
             resizeMode="contain"
           />
         </View>
 
-        <View className="flex-[0.4] items-center">
+        <View className="items-center">
           <Text 
-            className="text-[28px] font-bold text-gray-800 text-center mb-4" 
-            style={{ fontFamily: 'Poppins' }}
+            className="text-[28px] font-bold text-gray-800 text-center mb-2" 
+            style={{ fontFamily: FONT }}
           >
             {currentSlide.title}
             <Text className="text-[#FFB800]">{currentSlide.titleHighlight}</Text>
           </Text>
           <Text 
             className="text-[15px] text-gray-600 text-center leading-6" 
-            style={{ fontFamily: 'Poppins' }}
+            style={{ fontFamily: FONT }}
           >
             {currentSlide.description}
           </Text>
         </View>
       </View>
 
-      <View className="flex-row justify-between items-center px-6 pb-10 h-[100px] z-20">
+      <View className="flex-row justify-between items-center px-6 mt-10 h-[100px] z-20">
         <View className="flex-1 items-start">
           {currentSlideIndex > 0 && (
-            <TouchableOpacity onPress={goToPrevSlide} className="py-3 px-2">
+            <TouchableOpacity onPress={goToPrevSlide} style={{ backgroundColor: COLORS.secondaryButton }} className="rounded-lg flex-row items-center gap-2 px-6 py-3">
+              <Feather name="arrow-left" size={20} color={COLORS.text} />
               <Text 
-                className="font-semibold text-[16px] text-gray-800" 
-                style={{ fontFamily: 'Poppins' }}
+                className="font-semibold" 
+                style={{ fontFamily: FONT, fontSize: SIZES.medium - 1, fontWeight: '700', color: COLORS.text }}
               >
-                ← Prev
+                PREV
               </Text>
             </TouchableOpacity>
           )}
@@ -129,15 +131,16 @@ export const SplashScreen = ({ navigation }: any) => {
         <View className="flex-1 items-end">
           <TouchableOpacity 
             onPress={goToNextSlide} 
-            className="bg-[#FFB800] py-3 px-5 rounded-full shadow-sm min-w-[100px] items-center"
-            style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 }}
+            className="rounded-lg flex-row items-center gap-2 px-6 py-3"
+            style={{ backgroundColor: COLORS.primaryButton, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 }}
           >
             <Text 
-              className="font-semibold text-[16px] text-gray-800" 
-              style={{ fontFamily: 'Poppins' }}
+              className="font-semibold text-gray-800" 
+              style={{ fontFamily: FONT, fontWeight: '700', fontSize: SIZES.medium - 1 }}
             >
-              {currentSlideIndex === slides.length - 1 ? 'Finish ✓' : 'Next →'}
+              {currentSlideIndex === slides.length - 1 ? 'FINISH' : 'NEXT'}
             </Text>
+            <Feather name={currentSlideIndex === slides.length - 1 ? 'check' : 'arrow-right'} size={20} color={COLORS.text} />
           </TouchableOpacity>
         </View>
       </View>

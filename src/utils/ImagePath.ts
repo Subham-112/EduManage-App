@@ -6,5 +6,7 @@ export const ImagePath = {
 
         top_design: require('../../assets/images/splash/splash-top.png'),
         bottom_design: require('../../assets/images/splash/splash-bottom.png'),
-    }
+    },
+
+    LoginHeader: require('../../assets/images/login/header.png'),
 }
