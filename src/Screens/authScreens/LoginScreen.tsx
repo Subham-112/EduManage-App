@@ -16,12 +16,13 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Fa6 from 'react-native-vector-icons/FontAwesome6';
-import { ImagePath } from '../utils/ImagePath';
-import { COLORS, SIZES } from '../utils/theme';
+import { ImagePath } from '../../utils/ImagePath';
+import { COLORS, SIZES } from '../../utils/theme';
+import { Post, TokenStorage } from '../../utils/apiUtils';
 
 export const LoginScreen = () => {
   const navigation = useNavigation<any>();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +53,7 @@ export const LoginScreen = () => {
   }, [role]);
 
   const handleLogin = async () => {
-    if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
+    if (!identifier.trim() || !/\S+@\S+\.\S+/.test(identifier)) {
       ToastAndroid.show('Please enter a valid email.', ToastAndroid.SHORT);
       return;
     }
@@ -63,9 +64,28 @@ export const LoginScreen = () => {
 
     setIsLoading(true);
     try {
-      // TODO: Replace with actual login API
-      await new Promise((resolve: any) => setTimeout(resolve, 800));
-      ToastAndroid.show('Logged in (mock).', ToastAndroid.SHORT);
+      const url = "api/students/login";
+      const payload = {
+        identifier: identifier,
+        password: password,
+      }
+      const response: any = await Post(url, payload, 10000);
+      if (response.success) {
+        console.log("Login Response", response);
+        const token = response.token || response.data?.token;
+        const message = response.message || response.data?.message || 'Login successful';
+        
+        if (token) {
+          await TokenStorage.setToken(token);
+          console.log("Token set successfully", await TokenStorage.getToken());
+        }
+        
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+        navigation.navigate('HomeScreen');
+      } else {
+        const message = response.message || response.data?.message || 'Login failed';
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+      }
     } catch (err) {
       ToastAndroid.show('Login failed.', ToastAndroid.SHORT);
     } finally {
@@ -124,7 +144,7 @@ export const LoginScreen = () => {
               style={{
                 width: TOGGLE_WIDTH,
                 height: 52,
-                borderRadius: 22,
+                borderRadius: 12,
                 backgroundColor: '#eaebee',
                 padding: 4,
                 position: 'relative',
@@ -137,7 +157,7 @@ export const LoginScreen = () => {
                   top: 4,
                   width: role === 'student' ? OPTION_WIDTH : OPTION_WIDTH - 8,
                   height: 44,
-                  borderRadius: 18,
+                  borderRadius: 8,
                   backgroundColor: COLORS.primary,
                   transform: [{ translateX: translate }],
                 }}
@@ -199,7 +219,7 @@ export const LoginScreen = () => {
               style={{ fontSize: SIZES.medium }}
               className="font-semibold text-gray-700 mb-2"
             >
-              Email Address
+              Email or Phone
             </Text>
             <View
               style={{ borderWidth: 1, borderColor: '#e5e7eb' }}
@@ -210,10 +230,9 @@ export const LoginScreen = () => {
                 className="ml-3 flex-1 text-base text-gray-900"
                 placeholder="Enter your email"
                 placeholderTextColor="#9ca3af"
-                keyboardType="email-address"
                 autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
+                value={identifier}
+                onChangeText={setIdentifier}
               />
             </View>
           </View>

@@ -1,18 +1,44 @@
-import React, { lazy } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { HomeScreen } from '../components/HomeScreen';
-import { LoginScreen } from '../components/LoginScreen';
-import { SplashScreen } from '../components/SplashScreen';
-import { CreateAccount } from '../components/CreateAccount';
-import { CreateTenant } from '../components/CreateTenant';
+import { HomeScreen } from '../Screens/HomeScreen/HomeScreen';
+import { LoginScreen } from '../Screens/authScreens/LoginScreen';
+import { SplashScreen } from '../Screens/introScreen/SplashScreen';
+import { CreateAccount } from '../Screens/authScreens/CreateAccount';
+import { CreateTenant } from '../Screens/authScreens/CreateTenant';
+import { TokenStorage } from '../utils/apiUtils';
 
 const Stack = createNativeStackNavigator();
 
 export const MainNavigator = () => {
+  const [initialRoute, setInitialRoute] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      try {
+        const splashView = await TokenStorage.getSplashView();
+        const token = await TokenStorage.getToken();
+        
+        if (splashView) {
+          setInitialRoute(token ? 'HomeScreen' : 'LoginScreen');
+        } else {
+          setInitialRoute('SplashScreen');
+        }
+      } catch (error) {
+        console.error('Error checking navigation status:', error);
+        setInitialRoute('SplashScreen');
+      }
+    };
+    checkStatus();
+  }, []);
+
+  if (!initialRoute) {
+    return null; // Return nothing while checking status to avoid flicker
+  }
+
   return (
     <Stack.Navigator
-      initialRouteName="SplashScreen"
+      initialRouteName={initialRoute}
       screenOptions={{ animation: 'fade', headerShown: false }}
     >
       <Stack.Screen name="SplashScreen" component={SplashScreen} />

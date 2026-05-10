@@ -8,8 +8,9 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
-import { ImagePath } from '../utils/ImagePath';
-import { COLORS, FONT, SIZES } from '../utils/theme';
+import { ImagePath } from '../../utils/ImagePath';
+import { COLORS, FONT, SIZES } from '../../utils/theme';
+import { TokenStorage } from '../../utils/apiUtils';
 
 const slides = [
   {
@@ -45,11 +46,17 @@ export const SplashScreen = ({ navigation }: any) => {
     StatusBar.setBarStyle('dark-content');
   }, []);
 
-  const goToNextSlide = () => {
+  const goToNextSlide = async () => {
     if (currentSlideIndex < slides.length - 1) {
       setCurrentSlideIndex(currentSlideIndex + 1);
     } else {
-      navigation.replace('LoginScreen');
+      await TokenStorage.setSplashView(true);
+      const token = await TokenStorage.getToken();
+      if (token) {
+        navigation.replace('HomeScreen');
+      } else {
+        navigation.replace('LoginScreen');
+      }
     }
   };
 

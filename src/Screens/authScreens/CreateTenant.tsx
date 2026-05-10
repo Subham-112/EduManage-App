@@ -20,7 +20,7 @@ import {
 import { launchImageLibrary } from 'react-native-image-picker';
 import Fa6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { BASE_URL } from '../tools/apiUtils';
+import { BASE_URL } from '../../tools/apiUtils';
 import { useNavigation } from '@react-navigation/native';
 
 const STEPS = 2;
