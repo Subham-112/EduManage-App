@@ -7,6 +7,7 @@ import { SplashScreen } from '../Screens/introScreen/SplashScreen';
 import { CreateAccount } from '../Screens/authScreens/CreateAccount';
 import { CreateTenant } from '../Screens/authScreens/CreateTenant';
 import { TokenStorage } from '../utils/apiUtils';
+import { OwnerDashboard } from '../Screens/HomeScreen/OwnerDashboard';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +46,7 @@ export const MainNavigator = () => {
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="CreateAccount" component={CreateAccount} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="OwnerDashboard" component={OwnerDashboard} />
 
       <Stack.Screen name="CreateTenant" component={CreateTenant} />
     </Stack.Navigator>

@@ -28,7 +28,7 @@ export const CreateAccount = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [role, setRole] = useState('Designer');
+  const [role, setRole] = useState<"owner" | "teacher" | "staff" | "student">("owner");
 
   const handleSignUp = async () => {
     if (!fullName.trim()) {

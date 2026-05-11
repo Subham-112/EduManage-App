@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Fa6 from 'react-native-vector-icons/FontAwesome6';
-import { COLORS, FONT, SIZES } from '../utils/theme';
+import { COLORS, FONT } from '../../utils/theme';
 
 const { width } = Dimensions.get('window');
 

@@ -19,6 +19,7 @@ import Fa6 from 'react-native-vector-icons/FontAwesome6';
 import { ImagePath } from '../../utils/ImagePath';
 import { COLORS, SIZES } from '../../utils/theme';
 import { Post, TokenStorage } from '../../utils/apiUtils';
+import { RoleSelector } from '../../components/RoleSelector';
 
 export const LoginScreen = () => {
   const navigation = useNavigation<any>();
@@ -26,7 +27,7 @@ export const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [role, setRole] = useState<'student' | 'teacher'>('student');
+  const [role, setRole] = useState<'owner' | 'teacher' | 'staff' | 'student'>('owner');
 
   useEffect(() => {
     if (
@@ -52,46 +53,50 @@ export const LoginScreen = () => {
     }).start();
   }, [role]);
 
-  const handleLogin = async () => {
-    if (!identifier.trim() || !/\S+@\S+\.\S+/.test(identifier)) {
-      ToastAndroid.show('Please enter a valid email.', ToastAndroid.SHORT);
-      return;
-    }
-    if (!password.trim()) {
-      ToastAndroid.show('Please enter your password.', ToastAndroid.SHORT);
-      return;
-    }
+  // const handleLogin = async () => {
+  //   if (!identifier.trim() || !/\S+@\S+\.\S+/.test(identifier)) {
+  //     ToastAndroid.show('Please enter a valid email.', ToastAndroid.SHORT);
+  //     return;
+  //   }
+  //   if (!password.trim()) {
+  //     ToastAndroid.show('Please enter your password.', ToastAndroid.SHORT);
+  //     return;
+  //   }
 
-    setIsLoading(true);
-    try {
-      const url = "api/students/login";
-      const payload = {
-        identifier: identifier,
-        password: password,
-      }
-      const response: any = await Post(url, payload, 10000);
-      if (response.success) {
-        console.log("Login Response", response);
-        const token = response.token || response.data?.token;
-        const message = response.message || response.data?.message || 'Login successful';
+  //   setIsLoading(true);
+  //   try {
+  //     const url = "api/students/login";
+  //     const payload = {
+  //       identifier: identifier,
+  //       password: password,
+  //     }
+  //     const response: any = await Post(url, payload, 10000);
+  //     if (response.success) {
+  //       console.log("Login Response", response);
+  //       const token = response.token || response.data?.token;
+  //       const message = response.message || response.data?.message || 'Login successful';
         
-        if (token) {
-          await TokenStorage.setToken(token);
-          console.log("Token set successfully", await TokenStorage.getToken());
-        }
+  //       if (token) {
+  //         await TokenStorage.setToken(token);
+  //         console.log("Token set successfully", await TokenStorage.getToken());
+  //       }
         
-        ToastAndroid.show(message, ToastAndroid.SHORT);
-        navigation.navigate('HomeScreen');
-      } else {
-        const message = response.message || response.data?.message || 'Login failed';
-        ToastAndroid.show(message, ToastAndroid.SHORT);
-      }
-    } catch (err) {
-      ToastAndroid.show('Login failed.', ToastAndroid.SHORT);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //       ToastAndroid.show(message, ToastAndroid.SHORT);
+  //       navigation.navigate('HomeScreen');
+  //     } else {
+  //       const message = response.message || response.data?.message || 'Login failed';
+  //       ToastAndroid.show(message, ToastAndroid.SHORT);
+  //     }
+  //   } catch (err) {
+  //     ToastAndroid.show('Login failed.', ToastAndroid.SHORT);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const handleLogin = () => {
+    navigation.navigate('OwnerDashboard')
+  }
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -123,7 +128,7 @@ export const LoginScreen = () => {
         </View>
 
         <View className="p-6 py-0 mt-4">
-          <View className="items-center">
+          <View className="items-center mb-2">
             <Text
               style={{ fontSize: SIZES.extraLarge }}
               className="font-bold text-gray-900"
@@ -138,83 +143,9 @@ export const LoginScreen = () => {
             </Text>
           </View>
 
-          {/* Role toggle: Student / Teacher with sliding indicator */}
-          <View className="mt-4 items-center">
-            <View
-              style={{
-                width: TOGGLE_WIDTH,
-                height: 52,
-                borderRadius: 12,
-                backgroundColor: '#eaebee',
-                padding: 4,
-                position: 'relative',
-              }}
-            >
-              <Animated.View
-                style={{
-                  position: 'absolute',
-                  left: 4,
-                  top: 4,
-                  width: role === 'student' ? OPTION_WIDTH : OPTION_WIDTH - 8,
-                  height: 44,
-                  borderRadius: 8,
-                  backgroundColor: COLORS.primary,
-                  transform: [{ translateX: translate }],
-                }}
-              />
+          <RoleSelector role={role} setRole={setRole} />
 
-              <View style={{ flexDirection: 'row' }}>
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  onPress={() => {
-                    if (role !== 'student') setRole('student');
-                  }}
-                  style={{
-                    width: OPTION_WIDTH,
-                    height: 44,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: SIZES.medium,
-                      color: role === 'student' ? '#111' : '#6b7280',
-                      fontWeight: '600',
-                    }}
-                  >
-                    Student
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  onPress={() => {
-                    if (role !== 'teacher') setRole('teacher');
-                  }}
-                  style={{
-                    width: OPTION_WIDTH,
-                    height: 44,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: SIZES.medium,
-                      color: role === 'teacher' ? '#111' : '#6b7280',
-                      fontWeight: '600',
-                    }}
-                  >
-                    Teacher
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
-          <View className="mt-6">
+          <View className="">
             <Text
               style={{ fontSize: SIZES.medium }}
               className="font-semibold text-gray-700 mb-2"

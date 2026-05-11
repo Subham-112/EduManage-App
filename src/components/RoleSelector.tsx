@@ -9,11 +9,11 @@ const ROLES = [
 ];
 
 interface RoleSelectorProps {
-  role: string;
-  setRole: (role: string) => void;
+  role: "owner" | "teacher" | "staff" | "student";
+  setRole: (role: "owner" | "teacher" | "staff" | "student") => void;
 }
 
-export const RoleSelector = ({ role, setRole }: RoleSelectorProps) => {
+export const RoleSelector = ({ role, setRole }: RoleSelectorProps) => {  
   return (
     <View
       style={{
@@ -64,8 +64,8 @@ export const RoleSelector = ({ role, setRole }: RoleSelectorProps) => {
             backgroundColor: '#FFB800',
           }}
         >
-          {ROLES.map((role, idx) => (
-            <Picker.Item key={idx} label={role.label} value={role.value} />
+          {ROLES.map((roleItem, idx) => (
+            <Picker.Item key={idx} label={roleItem.label} value={roleItem.value} />
           ))}
         </Picker>
       </View>
