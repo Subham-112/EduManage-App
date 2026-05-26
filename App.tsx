@@ -6,6 +6,7 @@ import {
 } from 'react-native-safe-area-context';
 import { MainNavigator } from './src/navigators/MainNavigator';
 import { NavigationContainer } from '@react-navigation/native';
+import { BottomTabs } from './src/navigators/BottomNavigator';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -14,6 +15,7 @@ function App() {
     <NavigationContainer>
       <SafeAreaProvider>
         <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor="transparent" translucent={true} />
+        {/* <BottomTabs /> */}
         <AppContent />
       </SafeAreaProvider>
     </NavigationContainer>

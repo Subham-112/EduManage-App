@@ -8,6 +8,7 @@ import { CreateAccount } from '../Screens/authScreens/CreateAccount';
 import { CreateTenant } from '../Screens/authScreens/CreateTenant';
 import { TokenStorage } from '../utils/apiUtils';
 import { OwnerDashboard } from '../Screens/HomeScreen/OwnerDashboard';
+import { BottomTabs } from './BottomNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,8 +46,8 @@ export const MainNavigator = () => {
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="CreateAccount" component={CreateAccount} />
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="OwnerDashboard" component={OwnerDashboard} />
+      <Stack.Screen name="HomeScreen" component={BottomTabs} />
+      <Stack.Screen name="OwnerDashboard" component={BottomTabs} />
 
       <Stack.Screen name="CreateTenant" component={CreateTenant} />
     </Stack.Navigator>

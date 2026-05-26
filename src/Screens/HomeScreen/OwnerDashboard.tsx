@@ -149,39 +149,6 @@ export const OwnerDashboard = () => {
           </View>
         </View>
       </ScrollView>
-
-      {/* Bottom Tab Bar */}
-      <View 
-        className="absolute bottom-0 left-0 right-0 bg-white flex-row justify-around items-center pt-5 pb-8 rounded-t-[35px]"
-        style={{ 
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -12 },
-          shadowOpacity: 0.06,
-          shadowRadius: 24,
-          elevation: 25 
-        }}
-      >
-        <TouchableOpacity className="items-center">
-          <Fa6 name="table-cells-large" size={22} color="#A88B4B" />
-          <Text style={{ fontFamily: FONT }} className="text-[11px] mt-1.5 text-[#A88B4B] font-bold">Dashboard</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Fa6 name="users" size={22} color="#9CA3AF" />
-          <Text style={{ fontFamily: FONT }} className="text-[11px] mt-1.5 text-gray-400 font-bold">Students</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Fa6 name="chart-simple" size={22} color="#9CA3AF" />
-          <Text style={{ fontFamily: FONT }} className="text-[11px] mt-1.5 text-gray-400 font-bold">Analytics</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Fa6 name="graduation-cap" size={22} color="#9CA3AF" />
-          <Text style={{ fontFamily: FONT }} className="text-[11px] mt-1.5 text-gray-400 font-bold">Batches</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Fa6 name="user-large" size={22} color="#9CA3AF" />
-          <Text style={{ fontFamily: FONT }} className="text-[11px] mt-1.5 text-gray-400 font-bold">Profile</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 };
