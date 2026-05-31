@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Fa6 from 'react-native-vector-icons/FontAwesome6';
-import { COLORS, FONT } from '../../utils/theme';
+import { COLORS, FONT } from '../../../utils/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -75,39 +75,6 @@ export const OwnerDashboard = () => {
   return (
     <SafeAreaView className="flex-1 bg-[#F1F4F9]">
       <StatusBar barStyle="dark-content" />
-      
-      {/* Header Section */}
-      <View className="bg-white pt-8 pb-8 px-6 rounded-b-[45px] shadow-sm">
-        <View className="flex-row justify-between items-center mb-8">
-          <View>
-            <Text style={{ fontFamily: FONT }} className="text-[24px] font-bold text-[#8B6B3F]">
-              Good Morning, Rahul 👋
-            </Text>
-            <Text style={{ fontFamily: FONT }} className="text-sm text-gray-400 mt-1">
-              Here's your institute overview
-            </Text>
-          </View>
-          <View className="flex-row items-center gap-4">
-            <TouchableOpacity className="w-11 h-11 bg-white rounded-full items-center justify-center border border-gray-100">
-              <Fa6 name="bell" size={20} color="#8B6B3F" />
-              <View className="absolute top-0 right-0 w-4.5 h-4.5 bg-red-500 rounded-full items-center justify-center border-2 border-white">
-                <Text className="text-[9px] text-white font-bold">3</Text>
-              </View>
-            </TouchableOpacity>
-            <Image 
-              source={{ uri: 'https://i.pravatar.cc/150?img=12' }} 
-              className="w-11 h-11 rounded-full"
-            />
-          </View>
-        </View>
-
-        <TouchableOpacity className="flex-row items-center self-start bg-white border border-gray-100 px-5 py-2.5 rounded-full shadow-sm">
-          <Text style={{ fontFamily: FONT }} className="text-[13px] font-bold text-gray-700 mr-3">
-            Main Branch
-          </Text>
-          <Fa6 name="chevron-down" size={10} color="#8B6B3F" />
-        </TouchableOpacity>
-      </View>
 
       <ScrollView 
         showsVerticalScrollIndicator={false} 
