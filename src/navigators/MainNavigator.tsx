@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { HomeScreen } from '../Screens/HomeScreen/HomeScreen';
 import { LoginScreen } from '../Screens/authScreens/LoginScreen';
 import { SplashScreen } from '../Screens/introScreen/SplashScreen';
 import { CreateAccount } from '../Screens/authScreens/CreateAccount';
 import { CreateTenant } from '../Screens/authScreens/CreateTenant';
 import { TokenStorage } from '../utils/apiUtils';
-import { OwnerDashboard } from '../Screens/HomeScreen/OwnerDashboard';
 import { BottomTabs } from './BottomNavigator';
 
 const Stack = createNativeStackNavigator();
